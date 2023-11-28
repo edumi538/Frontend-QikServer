@@ -2,7 +2,7 @@ import { getSession, useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { GetUserById } from "../api/auth/register";
 import Container from "../../components/container";
-import Navbar from "../../components/navbar";
+import Navbar from "../../components/navbar.tsx";
 import PerfilBody from "./components/body";
 
 export default function MeuPerfil() {

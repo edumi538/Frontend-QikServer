@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { getProviders, getSession, signIn } from "next-auth/react";
-import Navbar from "../../components/navbar";
+import Navbar from "../../components/navbar.tsx";
 import LoginComponent from "./components/loginComponent";
 import DangerAlert from "../../components/alerts/danger";
 

@@ -1,7 +1,7 @@
 import Head from "next/head";
-import Navbar from "../components/navbar";
+import Navbar from "../components/navbar.tsx";
 import { getSession } from "next-auth/react";
-import Apresentation from "../components/apresentation";
+import Apresentation from "../components/apresentation.tsx";
 
 const Home = () => {
   return (

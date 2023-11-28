@@ -1,7 +1,12 @@
-import React from "react";
 import base_service from "../../../services/base_service";
 
-export async function Signup(data) {
+interface DataObject {
+  id: number;
+  name?: string;
+  password?: string;
+}
+
+export async function Signup(data: DataObject) {
   try {
     await base_service.post(process.env.NEXT_PUBLIC_API_ROUTE + "users", data, {
       headers: {
@@ -13,7 +18,7 @@ export async function Signup(data) {
     return "falhou";
   }
 }
-export async function UpdateUser(data, id) {
+export async function UpdateUser(data: DataObject, id: number) {
   try {
     await base_service.put(
       process.env.NEXT_PUBLIC_API_ROUTE + `users?id=eq.${id}`,
@@ -46,7 +51,7 @@ export async function GetAll() {
   }
 }
 
-export async function GetUserById(id) {
+export async function GetUserById(id: number) {
   try {
     const response = await base_service.get(
       process.env.NEXT_PUBLIC_API_ROUTE + `users?id=eq.${id}`,
@@ -61,7 +66,7 @@ export async function GetUserById(id) {
     return "falhou";
   }
 }
-export async function DeleteById(id) {
+export async function DeleteById(id: number) {
   try {
     await base_service.delete(
       process.env.NEXT_PUBLIC_API_ROUTE + `users?id=eq.${id}`,

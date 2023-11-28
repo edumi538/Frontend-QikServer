@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { GetAll, Signup, UpdateUser } from "../../api/auth/register";
-import { UpdateUsuarioLocalStorage } from "../../../services/register_service";
+import {
+  UpdateUsuarioLocalStorage,
+  Usuario,
+  getUsuarioLocalStorage,
+} from "../../../services/register_service";
 import { signOut } from "next-auth/react";
-
-function SetUsuarioLocalStorage(novoUsuario) {
-  const usuariosExistentes = JSON.parse(localStorage.getItem("usuarios")) || [];
+import { NextRouter } from "next/router";
+import { Session } from "next-auth";
+function SetUsuarioLocalStorage(novoUsuario: Usuario) {
+  const usuariosExistentes = getUsuarioLocalStorage();
   usuariosExistentes.push(novoUsuario);
   localStorage.setItem("usuarios", JSON.stringify(usuariosExistentes));
 }
@@ -14,55 +19,52 @@ async function gerarNovoId() {
   let contador = 0;
   let novoId = 0;
   if (typeof window !== "undefined") {
-    contador = localStorage.getItem("contador");
+    const contadorDoLocalStorageString = localStorage.getItem("contador");
+
+    contador = contadorDoLocalStorageString
+      ? parseInt(contadorDoLocalStorageString, 10)
+      : 0;
   }
-  const usuariosExistentes = JSON.parse(localStorage.getItem("usuarios")) || [];
   const usuarios = await GetAll();
 
-  if (usuariosExistentes.length > 0) {
-    const arrayids = usuariosExistentes.map((item) => item.id);
+  if (usuarios !== "falhou" && usuarios.length > 0) {
+    const arrayids = usuarios.map((item: Usuario) => item.id);
     const maiorid = Math.max.apply(null, arrayids);
     if (maiorid) {
       contador = maiorid;
     } else {
-      if (contador === null) {
-        contador = 0;
-      } else {
-        contador = parseInt(contador);
-      }
+      contador = 0;
     }
     novoId = contador + 1;
     if (typeof window !== "undefined") {
-      localStorage.setItem("contador", novoId);
-    }
-
-    return novoId;
-  } else if (usuarios.length > 0) {
-    const arrayids = usuarios.map((item) => item.id);
-    const maiorid = Math.max.apply(null, arrayids);
-    if (maiorid) {
-      contador = maiorid;
-    } else {
-      if (contador === null) {
-        contador = 0;
-      } else {
-        contador = parseInt(contador);
-      }
-    }
-    novoId = contador + 1;
-    if (typeof window !== "undefined") {
-      localStorage.setItem("contador", novoId);
+      localStorage.setItem("contador", novoId.toString());
     }
 
     return novoId;
   } else {
     novoId = contador + 1;
     if (typeof window !== "undefined") {
-      localStorage.setItem("contador", novoId);
+      localStorage.setItem("contador", novoId.toString());
     }
     return novoId;
   }
 }
+
+interface PropsRegisterComponent {
+  setResponse: (response: string) => void;
+  setSeconds: (seconds: number) => void;
+  Edicao?: boolean;
+  updateUsername: string;
+  updateId: number;
+  router: NextRouter;
+  session?: Session;
+}
+
+type FormValues = {
+  username: string;
+  password: string;
+  terms: boolean;
+};
 
 export const RegisterComponent = ({
   setResponse,
@@ -72,14 +74,13 @@ export const RegisterComponent = ({
   updateId,
   router,
   session,
-}) => {
+}: PropsRegisterComponent) => {
   const {
     register,
     handleSubmit,
-    watch,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormValues>();
 
   const [Loading, setLoading] = useState(false);
 
@@ -91,7 +92,10 @@ export const RegisterComponent = ({
     }
   }, [updateUsername, reset]);
 
-  const onSubmit = async (data) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data: {
+    username: string;
+    password: string;
+  }) => {
     setLoading(true);
     if (!Edicao) {
       const ID = await gerarNovoId();
@@ -116,8 +120,11 @@ export const RegisterComponent = ({
         updateId
       );
       if (response == "sucesso") {
-        UpdateUsuarioLocalStorage(data.username, data.password, updateId);
-        if (session.user.id === parseInt(updateId)) {
+        UpdateUsuarioLocalStorage(
+          { name: data.username, password: data.password },
+          updateId
+        );
+        if (session && session.user.id === updateId) {
           await signOut({ redirect: false })
             .then(() => {
               router.push("/login");

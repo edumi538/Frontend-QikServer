@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../../components/navbar";
+import Navbar from "../../components/navbar.tsx";
 import { RegisterComponent } from "./components/registerComponent";
 import SuccessAlert from "../../components/alerts/success";
 import { useRouter } from "next/navigation";
@@ -57,7 +57,10 @@ export default function RegisterScreen() {
     <>
       <Navbar page={"Registro"} />
       {Feedback(Response)}
-      <RegisterComponent setSeconds={setSeconds} setResponse={setResponse} />
+      <RegisterComponent
+        setSeconds={setSeconds}
+        setResponse={setResponse}
+      />
     </>
   );
 }

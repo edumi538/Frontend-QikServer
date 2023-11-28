@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import Navbar from "../../components/navbar";
+import Navbar from "../../components/navbar.tsx";
 import { RegisterComponent } from "../signup/components/registerComponent";
 import SuccessAlert from "../../components/alerts/success";
 import DangerAlert from "../../components/alerts/danger";

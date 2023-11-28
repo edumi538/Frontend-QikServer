@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import Navbar from "../components/navbar";
 import { getSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
+import { GetServerSidePropsContext } from "next";
 
 export default function home() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function home() {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { req } = context;
   const session = await getSession({ req });
   if (!session) {

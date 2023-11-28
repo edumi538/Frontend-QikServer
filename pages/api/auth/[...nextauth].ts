@@ -2,6 +2,11 @@ import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { GetAll } from "./register";
 
+interface Usuario {
+  name: string;
+  password: string;
+}
+
 export default NextAuth({
   providers: [
     CredentialsProvider({
@@ -14,16 +19,22 @@ export default NextAuth({
         },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
-        const { username, password } = credentials;
+      async authorize(credentials) {
+        const { username, password } = credentials as {
+          username: string;
+          password: string;
+        };
         const usuarios = await GetAll();
-        const usuarioEncontrado = usuarios.find(
-          (user) => user.name === username && user.password === password
-        );
-        if (usuarioEncontrado) {
-          return usuarioEncontrado;
-        } else {
-          return null;
+        if (usuarios !== "falhou") {
+          const usuarioEncontrado = usuarios.find(
+            (user: Usuario) =>
+              user.name === username && user.password === password
+          );
+          if (usuarioEncontrado) {
+            return usuarioEncontrado;
+          } else {
+            return null;
+          }
         }
       },
     }),
@@ -32,13 +43,13 @@ export default NextAuth({
     async jwt({ token, user }) {
       return { ...token, ...user };
     },
-    async session({ session, token, user }) {
+    async session({ session, token }) {
       session.user = token;
       return session;
     },
   },
   pages: {
     signIn: "/login",
-    signOut: ["/dashboard", "control_panel"],
+    signOut: "/dashboard",
   },
 });

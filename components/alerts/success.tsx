@@ -1,10 +1,14 @@
 import React from "react";
 
-export default function DangerAlert({ texto, fechar }) {
+interface PropsSuccessAlert {
+  texto: string;
+}
+
+export default function SuccessAlert({ texto }: PropsSuccessAlert) {
   return (
     <div
-      id="alert-border-2"
-      className="flex items-center p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800"
+      id="alert-border-3"
+      className="flex items-center p-4 mb-4 text-green-800 border-t-4 border-green-300 bg-green-50 dark:text-green-400 dark:bg-gray-800 dark:border-green-800"
       role="alert"
     >
       <svg
@@ -19,10 +23,9 @@ export default function DangerAlert({ texto, fechar }) {
       <div className="ms-3 text-sm font-medium">{texto}</div>
       <button
         type="button"
-        className="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700"
-        data-dismiss-target="#alert-border-2"
+        className="ms-auto -mx-1.5 -my-1.5 bg-green-50 text-green-500 rounded-lg focus:ring-2 focus:ring-green-400 p-1.5 hover:bg-green-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700"
+        data-dismiss-target="#alert-border-3"
         aria-label="Close"
-        onClick={fechar}
       >
         <span className="sr-only">Dismiss</span>
         <svg
@@ -35,8 +38,8 @@ export default function DangerAlert({ texto, fechar }) {
           <path
             stroke="currentColor"
             strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
+            stroke-linejoin="round"
+            stroke-width="2"
             d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
           />
         </svg>
