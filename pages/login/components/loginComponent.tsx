@@ -2,29 +2,43 @@
 import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { signIn } from "next-auth/react";
+import { SignInResponse as NextAuthSignInResponse } from "next-auth/react/types";
 
-const LoginComponent = ({ setAlert, signIn }) => {
+type FormValues = {
+  username: string;
+  password: string;
+  terms: boolean;
+};
+
+interface IPropsLoginComponent {
+  setAlert: (value: boolean) => void;
+}
+const LoginComponent = ({ setAlert }: IPropsLoginComponent) => {
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormValues>();
 
-  const onSubmit = (data) =>
+  const onSubmit = (data: { username: string; password: string }) =>
     signIn("credentials", {
       username: data.username,
       password: data.password,
       redirect: false,
-    }).then(({ ok, error }) => {
-      if (ok) {
-        router.push("/dashboard");
-      } else {
-        setAlert(true);
-      }
-    });
+    })
+      .then((ok: NextAuthSignInResponse | undefined) => {
+        if (ok) {
+          router.push("/dashboard");
+        } else {
+          setAlert(true);
+        }
+      })
+      .catch((error: NextAuthSignInResponse | undefined) => {
+        console.log(error);
+      });
 
   return (
     <div>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Disclosure } from "@headlessui/react";
 
-interface PropsNavbar {
+interface IPropsNavbar {
   isInit?: boolean;
   isHome?: boolean;
   page: string;
@@ -9,8 +9,7 @@ interface PropsNavbar {
   titulo?: string;
 }
 
-const Navbar = ({ isInit, isHome, page, signOut, titulo }: PropsNavbar) => {
-
+const Navbar = ({ isInit, isHome, page, signOut, titulo }: IPropsNavbar) => {
   return (
     <div className="w-full dark:border dark:bg-gray-800 dark:border-gray-700">
       <nav className="container relative flex flex-wrap items-center justify-between p-8 mx-auto lg:justify-between xl:px-0">

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../../components/navbar.tsx";
+import Navbar from "../../components/navbar";
 import { RegisterComponent } from "./components/registerComponent";
 import SuccessAlert from "../../components/alerts/success";
 import { useRouter } from "next/navigation";
 import DangerAlert from "../../components/alerts/danger";
-import { getSession, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export default function RegisterScreen() {
   const session = useSession();
@@ -29,7 +29,7 @@ export default function RegisterScreen() {
     }
   }, [Seconds]);
 
-  function Feedback(response) {
+  function Feedback(response: string) {
     if (response == "sucesso") {
       return (
         <SuccessAlert
@@ -51,16 +51,15 @@ export default function RegisterScreen() {
           )}
         </>
       );
+    } else {
+      return null;
     }
   }
   return (
     <>
       <Navbar page={"Registro"} />
       {Feedback(Response)}
-      <RegisterComponent
-        setSeconds={setSeconds}
-        setResponse={setResponse}
-      />
+      <RegisterComponent setSeconds={setSeconds} setResponse={setResponse} />
     </>
   );
 }

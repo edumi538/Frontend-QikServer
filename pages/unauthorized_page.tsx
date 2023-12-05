@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/navbar.tsx";
+import Navbar from "../components/navbar";
 import { useRouter } from "next/router";
 
 export default function UnauthorizedPage() {

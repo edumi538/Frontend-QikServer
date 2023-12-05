@@ -1,7 +1,8 @@
 import Head from "next/head";
-import Navbar from "../components/navbar.tsx";
+import Navbar from "../components/navbar";
 import { getSession } from "next-auth/react";
-import Apresentation from "../components/apresentation.tsx";
+import Apresentation from "../components/apresentation";
+import { GetServerSidePropsContext } from "next";
 
 const Home = () => {
   return (
@@ -23,7 +24,7 @@ const Home = () => {
 
 export default Home;
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { req } = context;
   const session = await getSession({ req });
   if (session) {

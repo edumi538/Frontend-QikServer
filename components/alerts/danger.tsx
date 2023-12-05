@@ -1,11 +1,11 @@
 import React from "react";
 
-interface PropsDangerAlert {
+interface IPropsDangerAlert {
   texto: string;
   fechar: () => void;
 }
 
-export default function DangerAlert({ texto, fechar }: PropsDangerAlert) {
+export default function DangerAlert({ texto, fechar }: IPropsDangerAlert) {
   return (
     <div
       id="alert-border-2"

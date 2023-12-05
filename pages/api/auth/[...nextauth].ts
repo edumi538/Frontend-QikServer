@@ -1,11 +1,7 @@
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { GetAll } from "./register";
-
-interface Usuario {
-  name: string;
-  password: string;
-}
+import { IUsuario } from "types/generic_interfaces";
 
 export default NextAuth({
   providers: [
@@ -27,7 +23,7 @@ export default NextAuth({
         const usuarios = await GetAll();
         if (usuarios !== "falhou") {
           const usuarioEncontrado = usuarios.find(
-            (user: Usuario) =>
+            (user: IUsuario) =>
               user.name === username && user.password === password
           );
           if (usuarioEncontrado) {

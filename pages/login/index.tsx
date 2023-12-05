@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { getProviders, getSession, signIn } from "next-auth/react";
-import Navbar from "../../components/navbar.tsx";
+import { getSession } from "next-auth/react";
+import Navbar from "../../components/navbar";
 import LoginComponent from "./components/loginComponent";
 import DangerAlert from "../../components/alerts/danger";
+import { GetServerSidePropsContext } from "next";
 
 export default function LoginScreen() {
   const [Alert, setAlert] = useState(false);
@@ -17,12 +18,12 @@ export default function LoginScreen() {
           }
         />
       )}
-      <LoginComponent setAlert={setAlert} signIn={signIn} />
+      <LoginComponent setAlert={setAlert}  />
     </>
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { req } = context;
   const session = await getSession({ req });
   if (session) {

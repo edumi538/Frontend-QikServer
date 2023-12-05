@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import Navbar from "../../components/navbar.tsx";
+import Navbar from "../../components/navbar";
 import { RegisterComponent } from "../signup/components/registerComponent";
 import SuccessAlert from "../../components/alerts/success";
 import DangerAlert from "../../components/alerts/danger";
@@ -11,13 +11,14 @@ export default function UpdateScreen() {
   const { data: session } = useSession();
   const [Seconds, setSeconds] = useState(0);
   const [Response, setResponse] = useState("");
-  const [UpdateUsername, setUpdateUsername] = useState("");
-  const [UpdateId, setUpdateId] = useState("");
+  const [Fechar, setFechar] = useState(false);
+  const [UpdateUsername, setUpdateUsername] = useState<string | string[]>("");
+  const [UpdateId, setUpdateId] = useState<string | string[]>("");
 
   useEffect(() => {
-    setUpdateUsername(router?.query?.name);
+    router.query.name && setUpdateUsername(router.query.name);
     if (router?.query && router.query.id) {
-      setUpdateId(router.query.id[0] || router.query.id);
+      router.query && setUpdateId(router.query.id[0] || router.query.id);
     }
   }, [router?.query]);
 
@@ -33,7 +34,7 @@ export default function UpdateScreen() {
     }
   }, [Seconds]);
 
-  function Feedback(response) {
+  function Feedback(response: string) {
     if (response == "sucesso") {
       return <SuccessAlert texto={"O Usuário foi atualizado com sucesso!"} />;
     } else if (response == "falhou") {
@@ -49,6 +50,8 @@ export default function UpdateScreen() {
           )}
         </>
       );
+    } else {
+      return null;
     }
   }
 

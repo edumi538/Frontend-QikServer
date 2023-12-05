@@ -1,28 +1,49 @@
-import React, { useEffect, useState } from "react";
-import { UpdateUsuarioLocalStorage } from "../../../services/register_service";
+import React, { useState } from "react";
+import {
+  UpdateUsuarioLocalStorage,
+} from "../../../services/register_service";
 import { UpdateUser } from "../../api/auth/register";
+import { IUsuario } from "types/generic_interfaces";
 
-export default function PerfilBody({ Usuario, setUsuario }) {
+interface IPropsBodyPerfil {
+  Usuario: IUsuario | undefined;
+  setUsuario: (usuario: IUsuario) => void;
+}
+
+export default function PerfilBody({ Usuario, setUsuario }: IPropsBodyPerfil) {
   const [DisableUsername, setDisableUsername] = useState(true);
   const [DisablePassword, setDisablePassword] = useState(true);
 
-  async function sendData(data) {
-    data.username && delete data.username;
-    data.terms && delete data.terms;
-    const dataEnvio = { ...data, name: data.username || data.name };
-    const response = await UpdateUser(dataEnvio, data.id);
+  async function sendData(data: IUsuario) {
+    const dataEnvio = { ...data, name: data.name };
+    const response = data.id ? await UpdateUser(dataEnvio, data.id) : "falhou";
     if (response == "sucesso") {
-      UpdateUsuarioLocalStorage(data.name, data.password, data.id);
+      data.id &&
+        UpdateUsuarioLocalStorage(
+          {
+            name: data.name ? data.name : "",
+            password: data.password ? data.password : "",
+          },
+          data.id
+        );
     }
   }
 
-  function handleInputChange(value, type) {
+  function handleInputChange(value: string, type: string) {
     switch (type) {
-      case "username":
-        setUsuario({ ...Usuario, name: value });
+      case "name":
+        setUsuario({
+          ...Usuario,
+          name: value,
+          password: Usuario?.password ? Usuario.password : "",
+        });
         break;
       case "password":
-        setUsuario({ ...Usuario, password: value });
+        setUsuario({
+          ...Usuario,
+          password: value,
+          name: Usuario?.name ? Usuario.name : "",
+        });
         break;
       default:
         break;
@@ -47,9 +68,9 @@ export default function PerfilBody({ Usuario, setUsuario }) {
                   className={`mr-3 text-center bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 ${
                     DisableUsername ? "dark:border-gray-600" : ""
                   } dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
-                  value={Usuario.name || Usuario.username}
+                  value={Usuario && Usuario.name}
                   onChange={(event) =>
-                    handleInputChange(event.target.value, "username")
+                    handleInputChange(event.target.value, "name")
                   }
                 />
                 {DisableUsername ? (
@@ -72,7 +93,7 @@ export default function PerfilBody({ Usuario, setUsuario }) {
                 ) : (
                   <button
                     onClick={() => {
-                      setDisableUsername(true), sendData(Usuario);
+                      setDisableUsername(true), Usuario && sendData(Usuario);
                     }}
                   >
                     <svg
@@ -99,7 +120,7 @@ export default function PerfilBody({ Usuario, setUsuario }) {
                   className={`mr-3 text-center bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 ${
                     DisablePassword ? "dark:border-gray-600" : ""
                   } dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
-                  value={Usuario.password}
+                  value={Usuario && Usuario.password}
                   onChange={(event) =>
                     handleInputChange(event.target.value, "password")
                   }
@@ -124,7 +145,7 @@ export default function PerfilBody({ Usuario, setUsuario }) {
                 ) : (
                   <button
                     onClick={() => {
-                      setDisablePassword(true), sendData(Usuario);
+                      setDisablePassword(true), Usuario && sendData(Usuario);
                     }}
                   >
                     <svg

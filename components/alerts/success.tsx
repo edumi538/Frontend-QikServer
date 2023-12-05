@@ -1,10 +1,10 @@
 import React from "react";
 
-interface PropsSuccessAlert {
+interface IPropsSuccessAlert {
   texto: string;
 }
 
-export default function SuccessAlert({ texto }: PropsSuccessAlert) {
+export default function SuccessAlert({ texto }: IPropsSuccessAlert) {
   return (
     <div
       id="alert-border-3"

@@ -3,13 +3,14 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { GetAll, Signup, UpdateUser } from "../../api/auth/register";
 import {
   UpdateUsuarioLocalStorage,
-  Usuario,
   getUsuarioLocalStorage,
 } from "../../../services/register_service";
 import { signOut } from "next-auth/react";
 import { NextRouter } from "next/router";
 import { Session } from "next-auth";
-function SetUsuarioLocalStorage(novoUsuario: Usuario) {
+import CustomSession from "utils/session_util";
+import { IUsuario } from "types/generic_interfaces";
+function SetUsuarioLocalStorage(novoUsuario: IUsuario) {
   const usuariosExistentes = getUsuarioLocalStorage();
   usuariosExistentes.push(novoUsuario);
   localStorage.setItem("usuarios", JSON.stringify(usuariosExistentes));
@@ -28,7 +29,7 @@ async function gerarNovoId() {
   const usuarios = await GetAll();
 
   if (usuarios !== "falhou" && usuarios.length > 0) {
-    const arrayids = usuarios.map((item: Usuario) => item.id);
+    const arrayids = usuarios.map((item: IUsuario) => item.id);
     const maiorid = Math.max.apply(null, arrayids);
     if (maiorid) {
       contador = maiorid;
@@ -50,14 +51,14 @@ async function gerarNovoId() {
   }
 }
 
-interface PropsRegisterComponent {
+interface IPropsRegisterComponent {
   setResponse: (response: string) => void;
   setSeconds: (seconds: number) => void;
   Edicao?: boolean;
-  updateUsername: string;
-  updateId: number;
-  router: NextRouter;
-  session?: Session;
+  updateUsername?: string | string[];
+  updateId?: string | string[];
+  router?: NextRouter;
+  session?: Session | null;
 }
 
 type FormValues = {
@@ -74,7 +75,7 @@ export const RegisterComponent = ({
   updateId,
   router,
   session,
-}: PropsRegisterComponent) => {
+}: IPropsRegisterComponent) => {
   const {
     register,
     handleSubmit,
@@ -85,17 +86,21 @@ export const RegisterComponent = ({
   const [Loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (updateUsername) {
-      reset({
-        username: updateUsername || "",
-      });
-    }
+    reset({
+      username:
+        updateUsername && typeof updateUsername == "string"
+          ? updateUsername
+          : "",
+    });
   }, [updateUsername, reset]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data: {
     username: string;
     password: string;
   }) => {
+    const customSession = session && CustomSession(session);
+    const IdNumber =
+      updateId && typeof updateId == "string" ? parseInt(updateId) : 0;
     setLoading(true);
     if (!Edicao) {
       const ID = await gerarNovoId();
@@ -116,18 +121,22 @@ export const RegisterComponent = ({
       window.scrollTo(0, 0);
     } else {
       const response = await UpdateUser(
-        { id: updateId, name: data.username, password: data.password },
-        updateId
+        {
+          id: IdNumber,
+          name: data.username,
+          password: data.password,
+        },
+        IdNumber
       );
       if (response == "sucesso") {
         UpdateUsuarioLocalStorage(
           { name: data.username, password: data.password },
-          updateId
+          IdNumber
         );
-        if (session && session.user.id === updateId) {
+        if (customSession && customSession.user.id === IdNumber) {
           await signOut({ redirect: false })
             .then(() => {
-              router.push("/login");
+              router && router.push("/login");
             })
             .catch((error) => {
               console.log(error);

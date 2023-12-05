@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/navbar";
 import UsersTable from "./components/users_table";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import { DeleteById, GetAll } from "../api/auth/register";
-import { Usuario, getUsuarioLocalStorage } from "services/register_service";
+import {  getUsuarioLocalStorage } from "services/register_service";
+import { GetServerSidePropsContext } from "next";
+import { IUsuario } from "types/generic_interfaces";
 
 export default function PainelDeControleScreen() {
-  const { data: session } = useSession();
   const [StateUsuariosExistentes, SetStateUsuariosExistentes] = useState<
-    Usuario[]
+    IUsuario[]
   >([]);
 
   useEffect(() => {
@@ -47,13 +48,12 @@ export default function PainelDeControleScreen() {
       <UsersTable
         usuariosExistentes={StateUsuariosExistentes}
         handleDelete={handleDelete}
-        session={session}
       />
     </>
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context:GetServerSidePropsContext) {
   const { req } = context;
   const session = await getSession({ req });
   if (!session) {

@@ -1,15 +1,10 @@
-export interface Usuario {
-  id: number;
-  name: string;
-  password: string;
-}
-
+import { IUsuario } from "../types/generic_interfaces";
 export function UpdateUsuarioLocalStorage(
   usuario: {
     name: string;
     password: string;
   },
-  updateId: number
+  updateId: number | undefined
 ) {
   const usuariosExistentes = getUsuarioLocalStorage();
   const indiceDoUsuario = usuariosExistentes.findIndex(
@@ -26,7 +21,7 @@ export function UpdateUsuarioLocalStorage(
 
 export function getUsuarioLocalStorage() {
   const usuariosDoLocalStorageString = localStorage.getItem("usuarios");
-  const usuariosExistentes: Usuario[] = usuariosDoLocalStorageString
+  const usuariosExistentes: IUsuario[] = usuariosDoLocalStorageString
     ? JSON.parse(usuariosDoLocalStorageString)
     : [];
   return usuariosExistentes;
